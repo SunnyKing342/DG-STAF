@@ -80,9 +80,8 @@ Performance on the BjTT+DAIR-V2X benchmark:
 
 | Model          | Hits@1 | Hits@10 | MRR   |
 |----------------|--------|---------|-------|
-| DG-STAF (Ours) | TBA    | TBA     | TBA   |
+| DG-STAF (Ours) | 0.948    | 0.975     | 0.961   |
 
-Results will be added after the experiments are completed.
 
 ## 📄 Citation
 If you find this work useful, please cite our paper:
@@ -92,8 +91,4 @@ If you find this work useful, please cite our paper:
   author={Ghaffar, Muhammad Arslan and Zhang, Kangshuai and Pan, Nuo and Peng, Lei},
   year={2026}
 }
-```
-## 📜 License
-```
-This project is licensed under the MIT License - see the LICENSE file for details.
 ```
