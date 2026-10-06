@@ -16,8 +16,9 @@ DG-STAF/
 │   ├── bjtt/                 # Raw BjTT dataset
 │   ├── dair-v2x/             # Raw DAIR-V2X dataset
 │   └── synchronized/         # Final aligned benchmark
-├── scripts/                  # Data synchronization
-│   └── synchronize_data.py
+├── scripts/                  # Data synchronization & toy data
+│   ├── synchronize_data.py
+│   └── make_toy_data.py      # Synthetic benchmark for quick smoke tests
 ├── configs/                  # Model configurations
 │   └── dgstaf.yaml
 ├── models/                   # DG-STAF core architecture
@@ -27,6 +28,8 @@ DG-STAF/
 │   ├── alignment.py          # Top-K smoothing, Sinkhorn OT, reciprocal verification
 │   └── dgstaf.py             # Full model, loss and evaluation
 ├── utils/                    # TR-BC distance, metrics & helper functions
+├── tests/                    # Unit and smoke tests
+│   └── test_dgstaf.py
 ├── train.py                  # Training script
 ├── test.py                   # Evaluation script
 ├── requirements.txt          # Dependencies
@@ -75,13 +78,26 @@ python train.py --set model.use_staf=false                # w/o STAF
 python train.py --set "model.modalities=[s,w,l]"          # w/o visual modality
 ```
 
+## 🧪 Quick Test (no data required)
+Generate a small synthetic benchmark and run the whole pipeline on CPU (no model download):
+```bash
+python scripts/dummy_data.py --out data/dummy
+python train.py --config data/dummy/config.yaml
+python test.py  --config data/dummy/config.yaml
+```
+The toy scores only verify that the code runs and are not representative of real performance.
+
+Run the unit tests:
+```bash
+python -m unittest discover -s tests -v
+```
+
 ## 📊 Main Results
 Performance on the BjTT+DAIR-V2X benchmark:
 
 | Model          | Hits@1 | Hits@10 | MRR   |
 |----------------|--------|---------|-------|
 | DG-STAF (Ours) | 0.948    | 0.975     | 0.961   |
-
 
 ## 📄 Citation
 If you find this work useful, please cite our paper:
