@@ -29,6 +29,7 @@ def _latent(key, dim):
 
 
 def make_toy(out, n_src=200, n_tgt=180, n_pairs=150, seed=0, exclude_matched_frames=False):
+    out = out if os.path.isabs(out) else os.path.join(ROOT, out)
     rng = np.random.RandomState(seed)
     bj, dair, sync = (os.path.join(out, d) for d in ("bjtt", "dair-v2x", "synchronized"))
     for d in (bj, dair, sync, os.path.join(dair, "img")):
@@ -105,7 +106,7 @@ def make_toy(out, n_src=200, n_tgt=180, n_pairs=150, seed=0, exclude_matched_fra
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default="data/toy")
+    ap.add_argument("--out", default="data/dummy")
     ap.add_argument("--n_src", type=int, default=200)
     ap.add_argument("--n_tgt", type=int, default=180)
     ap.add_argument("--n_pairs", type=int, default=150)
