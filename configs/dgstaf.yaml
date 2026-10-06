@@ -1,0 +1,66 @@
+# DG-STAF configuration. Values marked [paper] come from the manuscript; values marked
+# [choice] are NOT specified in the paper and are implementation choices - set them to
+# whatever was used in your experiments.
+
+seed: 42                         # [choice] default single-run seed
+seeds: [0, 1, 2, 3, 4]           # [choice] five runs, as in the evaluation protocol [paper]
+device: cuda                     # falls back to cpu automatically
+
+data:
+  dir: ./data/synchronized       # benchmark.pt, pairs.csv live here
+  bjtt_dir: ./data/bjtt          # entities.csv, edges.csv   (source graph G_S)
+  dair_dir: ./data/dair-v2x      # entities.csv, frames.csv  (target graph G_T)
+  split: [0.70, 0.15, 0.15]      # [paper] entity-level train / val / test
+  split_seed: 42                 # [choice]
+  proxy_radius_m: 50             # [paper] r, proxy structural graph of G_T
+  image_k: 3                     # [paper] k nearest frames pooled per source entity
+  image_radius_m: 150            # [paper] r_img
+  gt_radius_m: 5                 # [paper] radius of the candidate generation for ground truth
+  time_window_s: 60              # [paper] sliding window for candidate generation
+  exclude_matched_frames: false  # circularity control: drop a source's gold-target frames from its pool
+  bert_name: bert-base-multilingual-cased   # [choice] the paper only says "BERT" (768-d [CLS])
+  bert_max_len: 64               # [paper]
+  extract_batch: 32
+
+model:
+  struct_in: 4                   # [choice] degree, mean neighbour degree, clustering, 2-hop size
+  gat_hidden: 256                # [paper]
+  gat_layers: 2                  # [paper]
+  gat_heads: 8                   # [paper]
+  dropout: 0.2                   # [paper]
+  text_in: 768                   # [paper] BERT [CLS]
+  text_dim: 512                  # [paper]
+  vis_in: 2048                   # [paper] ResNet-152 GAP
+  vis_hidden: 1024               # [paper]
+  vis_dim: 512                   # [paper]
+  trbc_lambda: 0.1               # [paper]
+  trbc_eps: 1.0e-6               # [choice]
+  trbc_sigma2_max: 1.0           # embeddings are bounded to (0,1) -> max Var(x-y) = 1
+  dist_chunk: 32
+  dcg_tau: 0.5                   # [paper]
+  dcg_var_scale: 1.0             # 1.0 = paper formula; see README "DCG scale"
+  staf_ctx_dim: 32               # [choice] size of E(S) and E(T)
+  staf_d_k: 32                   # [choice]
+  staf_d_e: 16                   # [choice]
+  modalities: [s, w, v, l]       # ablation: any subset of structural, semantic, visual, literal
+  use_dcg: true                  # false = uniform gating weights (ablation)
+  use_staf: true                 # false = uniform fusion weights (ablation)
+  topk_K: 3                      # [paper]
+  topk_beta: 0.8                 # [paper]
+  ot_eps: 0.05                   # [paper] epsilon_OT
+  ot_iters: 100                  # [choice] Sinkhorn iterations
+
+train:
+  epochs: 200                    # [paper] maximum, with early stopping
+  batch_size: 64                 # [paper]
+  lr_max: 5.0e-4                 # [paper] initial learning rate (peak of the cyclic schedule)
+  lr_base: 5.0e-5                # [choice] lower bound of the cyclic schedule
+  cycle_epochs: 10               # [choice] epochs from lr_base to lr_max
+  weight_decay: 1.0e-4           # [paper]
+  gamma: 0.5                     # [paper] hinge margin
+  mu: 0.15                       # [paper] entropy-regulariser weight
+  num_neg: 1                     # [paper] one random negative per positive
+  eval_interval: 1               # validate every n epochs
+  patience: 20                   # [choice] early stopping, in validation rounds
+  save_dir: ./checkpoints
+  log_dir: ./logs
